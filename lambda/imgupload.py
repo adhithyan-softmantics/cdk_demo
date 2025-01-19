@@ -19,11 +19,14 @@ def lambda_handler(event, context):
 
         # Decode the base64-encoded image
         image_data = base64.b64decode(image_content)
+          # Use a timestamp to create a unique filename
+        timestamp = int(time.time())
+        file_name = f"uploaded_image_{timestamp}.jpg"
 
         # Upload the image to S3
         s3.put_object(
             Bucket=BUCKET_NAME,
-            Key="uploaded_image.jpg",
+            Key=file_name,
             Body=image_data,
             ContentType="image/jpeg"
         )
