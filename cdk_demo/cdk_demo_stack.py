@@ -15,7 +15,7 @@ class CdkDemoStack(Stack):
         bucket = s3.Bucket(
             self,
             "ImageBucket",
-            bucket_name="imgbucket",
+            bucket_name="imgbucket-cdktest-adhi",
             versioned=True,
             removal_policy=RemovalPolicy.DESTROY,  # Cleanup on stack deletion
             auto_delete_objects=True,  # Automatically delete bucket objects
