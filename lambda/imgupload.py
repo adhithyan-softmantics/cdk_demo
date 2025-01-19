@@ -9,17 +9,9 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 
 def lambda_handler(event, context):
     try:
-        # Read the image from the request body (base64-encoded)
-        image_content = event.get('body')
-        if not image_content:
-            return {
-                "statusCode": 400,
-                "body": "No image content found in the request body"
-            }
-
-        # Decode the base64-encoded image
-        image_data = base64.b64decode(image_content)
-
+        image_path = "/var/task/test_image.jpg" 
+        with open(image_path, "rb") as image_file:
+            image_data = image_file.read()
         # Upload the image to S3
         s3.put_object(
             Bucket=BUCKET_NAME,

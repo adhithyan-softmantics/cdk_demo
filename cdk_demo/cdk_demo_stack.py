@@ -7,7 +7,7 @@ from aws_cdk import (
     RemovalPolicy,
 )
 
-class cdkdemostack(Stack):
+class CdkDemoStack(Stack):
     def __init__(self, scope: App, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
