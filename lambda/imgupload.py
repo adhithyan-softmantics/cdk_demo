@@ -1,6 +1,4 @@
- 
 import boto3
-import base64
 import os
 from botocore.exceptions import ClientError
 
@@ -9,35 +7,40 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 
 def lambda_handler(event, context):
     try:
-        # Read the image from the request body (base64-encoded)
-        image_content = event.get('body')
+        # Get the raw binary data from the request body
+        image_content = event.get('body', None)
         if not image_content:
             return {
                 "statusCode": 400,
                 "body": "No image content found in the request body"
             }
 
-        # Decode the base64-encoded image
-        image_data = base64.b64decode(image_content)
-          # Use a timestamp to create a unique filename
-        timestamp = int(time.time())
-        file_name = f"uploaded_image_{timestamp}.jpg"
+        # Ensure the content type is set correctly
+        content_type = event.get('headers', {}).get('content-type', 'image/jpeg')
 
-        # Upload the image to S3
+        # Generate a unique filename
+        file_name = "uploaded_image.jpg"
+
+        # Upload the file to the S3 bucket
         s3.put_object(
             Bucket=BUCKET_NAME,
             Key=file_name,
-            Body=image_data,
-            ContentType="image/jpeg"
+            Body=image_content,
+            ContentType=content_type
         )
 
         return {
             "statusCode": 200,
-            "body": "Image successfully uploaded to the bucket!"
+            "body": f"Image successfully uploaded to {BUCKET_NAME} as {file_name}"
         }
 
     except ClientError as e:
         return {
             "statusCode": 500,
-            "body": str(e)
+            "body": f"Error uploading image: {str(e)}"
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": f"Unexpected error: {str(e)}"
         }
